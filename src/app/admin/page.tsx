@@ -1,14 +1,18 @@
+import React from "react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+type Props = {};
 
-export default function Home() {
+const Page = (props: Props) => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <div>
       <SignedOut>
         <SignInButton />
       </SignedOut>
       <SignedIn>
         <UserButton />
       </SignedIn>
-    </main>
+    </div>
   );
-}
+};
+
+export default Page;
