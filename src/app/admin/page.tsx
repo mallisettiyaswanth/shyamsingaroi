@@ -1,18 +1,14 @@
 import React from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { checkRole } from "@/utils/roles";
+import { redirect } from "next/navigation";
 type Props = {};
 
-const Page = (props: Props) => {
-  return (
-    <div>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
-    </div>
-  );
+const Page = async (props: Props) => {
+  const isAdmin = await checkRole("admin");
+  if (!isAdmin) {
+    redirect("/");
+  }
+  return <div>{JSON.stringify(isAdmin)}</div>;
 };
 
 export default Page;
