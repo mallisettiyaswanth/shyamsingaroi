@@ -1,14 +1,21 @@
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Categories from "@/components/global/Categories";
+import Experience from "@/components/global/experience";
+import Footer from "@/components/global/footer";
+import Hero from "@/components/global/hero";
+import Navbar from "@/components/global/navbar";
+import NewStock from "@/components/global/new-stock";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
+    <main className="flex min-h-screen flex-col">
+      <Navbar />
+      <Hero />
+      <NewStock />
+      <div className="flex flex-col gap-24">
+        <Experience />
+        <Categories />
+        <Footer />
+      </div>
     </main>
   );
 }
