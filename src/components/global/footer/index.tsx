@@ -99,7 +99,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t">
         <div className="container px-4 py-4 mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
-          <p className="text-muted-foreground">© 2025 syam silks</p>
+          <p className="text-muted-foreground">© 2025 shyam silks</p>
           <div className="flex gap-4 mt-2 sm:mt-0">
             <Link
               href="#"

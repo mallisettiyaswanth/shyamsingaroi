@@ -8,10 +8,12 @@ type Props = {};
 
 const Hero = (props: Props) => {
   return (
-    <div className="px-2 lg:px-8 flex flex-col items-center min-h-screen">
+    <div className="px-2  lg:px-8 flex flex-col items-center min-h-screen">
       <div className="w-full rounded-lg overflow-hidden relative mx-auto shadow-lg">
         <img
-          src="https://img.freepik.com/free-photo/beautiful-african-model-with-perfect-curly-hairs-elegant-orange-blouse-silk-pants-sitting-vintage-chair-beige-wall_273443-4089.jpg?semt=ais_hybrid"
+          // src="https://img.freepik.com/free-photo/beautiful-african-model-with-perfect-curly-hairs-elegant-orange-blouse-silk-pants-sitting-vintage-chair-beige-wall_273443-4089.jpg?semt=ais_hybrid"
+          // src="/logo.png"
+          src="/hero.jpg"
           alt="Elegant African model sitting in a vintage chair"
           className="object-cover w-full h-[500px] sm:h-[500px] md:h-[600px]"
         />
@@ -23,13 +25,12 @@ const Hero = (props: Props) => {
                 Shyam silks
               </h1>
               <span className="px-5">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Ducimus, nam?
+                Where tradition meets modern fashion.
               </span>
             </div>
             <Button
               size="lg"
-              className="rounded-full lg:self-end bg-white text-black px-10"
+              className="rounded-full lg:self-end bg-white text-black px-10 hover:text-white"
             >
               Explore
               <ArrowRight />
