@@ -32,6 +32,10 @@ const data = {
           title: "Orders",
           url: "/admin/orders",
         },
+        {
+          title: "Add Product",
+          url: "/admin/add-product",
+        },
       ],
     },
   ],
