@@ -5,7 +5,7 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { incomeType, categories } from "@/components/global/data-table/data";
+import { BrandType, categories } from "@/components/global/data-table/data";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 // import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { CalendarDatePicker } from "@/components/calendar-date-picker";
@@ -29,7 +29,6 @@ export function DataTableToolbar<TData>({
 
   const handleDateSelect = ({ from, to }: { from: Date; to: Date }) => {
     setDateRange({ from, to });
-    // Filter table data based on selected date range
     table.getColumn("date")?.setFilterValue([from, to]);
   };
 
@@ -37,10 +36,10 @@ export function DataTableToolbar<TData>({
     <div className="flex flex-wrap items-center justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <Input
-          placeholder="Filter labels..."
-          value={(table.getColumn("note")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter Products..."
+          value={(table.getColumn("barcode")?.getFilterValue() as string) ?? ""}
           onChange={(event) => {
-            table.getColumn("note")?.setFilterValue(event.target.value);
+            table.getColumn("barcode")?.setFilterValue(event.target.value);
           }}
           className="h-8 w-[150px] lg:w-[250px]"
         />
@@ -51,11 +50,11 @@ export function DataTableToolbar<TData>({
             options={categories}
           />
         )}
-        {table.getColumn("type") && (
+        {table.getColumn("brand") && (
           <DataTableFacetedFilter
-            column={table.getColumn("type")}
-            title="Type"
-            options={incomeType}
+            column={table.getColumn("brand")}
+            title="Brand"
+            options={BrandType}
           />
         )}
         {isFiltered && (

@@ -43,15 +43,25 @@ export const categories = [
   },
 ];
 
-export const incomeType = [
+export const BrandType = [
   {
-    label: "Income",
-    value: "income",
-    icon: ArrowUpIcon,
+    label: "Brand A",
+    value: "BrandA",
   },
   {
-    label: "Expense",
-    value: "expense",
-    icon: ArrowDownIcon,
+    label: "Brand B",
+    value: "BrandB",
+  },
+  {
+    label: "Brand C",
+    value: "BrandC",
+  },
+  {
+    label: "Brand D",
+    value: "BrandD",
+  },
+  {
+    label: "Brand E",
+    value: "BrandE",
   },
 ];
