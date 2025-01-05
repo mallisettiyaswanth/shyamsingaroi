@@ -14,17 +14,12 @@ export const productSchema = z.object({
   brand: z.string(),
   meta: z.object({
     created_at: z.string(),
-    updated_At: z.string(),
+    updated_at: z.string(),
     barcode: z.string(),
     qrcode: z.string(),
   }),
-  images: z.array(z.string()), // Array of image URLs
-  sizes: z.array(
-    z.object({
-      size: z.string(),
-      available: z.boolean(),
-    })
-  ),
+  images: z.array(z.string()),
+  sizes: z.array(z.string()),
 });
 
 export type Product = z.infer<typeof productSchema>;

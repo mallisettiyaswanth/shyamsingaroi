@@ -127,6 +127,21 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: "description",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="description" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium capitalize">
+            {row.getValue("description")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "sizes",
     header: ({ column }) => {
       return <DataTableColumnHeader column={column} title="Sizes" />;
@@ -134,20 +149,9 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       return (
         <div className={"flex gap-1"}>
-          {(row.original.sizes || [])?.map(
-            (size: { size: string; available: boolean }) => {
-              return (
-                <div
-                  className={cn(
-                    "p-3 rounded-md border flex-1",
-                    size.available && "bg-green-300"
-                  )}
-                >
-                  {size.size}
-                </div>
-              );
-            }
-          )}
+          {(row.original.sizes || [])?.map((size) => {
+            return <div className="">{size}</div>;
+          })}
         </div>
       );
     },
