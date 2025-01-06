@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SignedOut, SignedIn, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
@@ -26,12 +26,17 @@ export default function ResponsiveNavbar() {
       <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-300">
         <nav className="flex flex-col p-5 px-8">
           <div className="flex justify-between items-center">
+            {/* Logo */}
             <div>
-              <img src="/logo.png" alt="Logo" className="w-full h-14" />
+              <Link href="/">
+                <img src="/logo.png" alt="Logo" className="w-full h-14" />
+              </Link>
             </div>
-            <div className="hidden gap-8 text-md uppercase font-bold lg:flex">
+
+            {/* Desktop Menu */}
+            <div className="hidden gap-8 text-md uppercase font-bold lg:flex lg:justify-center">
               <div
-                className="relative"
+                className="relative h-full"
                 onMouseEnter={() => handleMouseEnter("women")}
                 onMouseLeave={handleMouseLeave}
               >
@@ -40,7 +45,7 @@ export default function ResponsiveNavbar() {
                 </Link>
               </div>
               <div
-                className="relative"
+                className="relative h-full"
                 onMouseEnter={() => handleMouseEnter("men")}
                 onMouseLeave={handleMouseLeave}
               >
@@ -48,21 +53,28 @@ export default function ResponsiveNavbar() {
                   Men
                 </Link>
               </div>
-              <div
-                className="relative"
-                onMouseEnter={() => handleMouseEnter("kids")}
-                onMouseLeave={handleMouseLeave}
-              >
-                <Link href="/category/kids" className="pointer">
-                  Kids
-                </Link>
-              </div>
             </div>
+
+            {/* Search Bar */}
+            <div className="lg:flex items-center relative w-1/3">
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full p-2 pl-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+              />
+              <Search className="absolute left-3 w-5 h-5 text-gray-500" />
+            </div>
+
+            {/* Icons */}
             <ul className="flex gap-3 items-center">
+              {/* Cart */}
               <li className="flex flex-col gap-1 items-center justify-center px-3">
-                <ShoppingCart className="w-4 h-4" />
-                <span className="text-xs font-semibold">Cart</span>
+                <Link href="/cart">
+                  <ShoppingCart className="w-4 h-4" />
+                  <span className="text-xs font-semibold">Cart</span>
+                </Link>
               </li>
+              {/* User Authentication */}
               <li>
                 <SignedOut>
                   <Button>
@@ -73,6 +85,7 @@ export default function ResponsiveNavbar() {
                   <UserButton />
                 </SignedIn>
               </li>
+              {/* Mobile Menu Toggle */}
               <li className="lg:hidden">
                 <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
                   {isMenuOpen ? (
@@ -84,6 +97,8 @@ export default function ResponsiveNavbar() {
               </li>
             </ul>
           </div>
+
+          {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="flex flex-col gap-4 text-sm lg:hidden mt-4">
               <span>Women</span>

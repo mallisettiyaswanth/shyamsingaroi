@@ -102,3 +102,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes flame {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-flicker {
+  animation: flicker 2s infinite;
+}
+
+.animate-flame {
+  animation: flame 1s infinite;
+}
