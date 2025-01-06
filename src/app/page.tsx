@@ -8,6 +8,7 @@ import NewStock from "@/components/global/new-stock";
 import FeaturesSection from "@/components/features-section";
 import TrendingBanner from "@/components/global/festive-banner";
 import ProductCarousel from "@/components/trending-product";
+import TopProducts from "@/components/top-products";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <CategorySection />
         <TrendingBanner />
         <ProductCarousel />
+        <TopProducts />
         <FeaturesSection />
         <Footer />
       </div>
