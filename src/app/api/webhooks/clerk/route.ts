@@ -41,23 +41,31 @@ export async function POST(request: Request) {
   switch (eventType) {
     case "user.created":
       const data = payload.data;
-
+      console.log(data);
       const insertingData = {
         id: data.id,
+        user_id: data.id,
         email: data.email_addresses.find(
           (e: any) => e.id === data.primary_email_address_id
         ).email_address,
         firstName: data.first_name,
         lastName: data.last_name,
         image: data.profile_image_url,
+        username: data.username,
       };
+      const { data: createData, error } = await supabase
+        .from("user")
+        .insert([insertingData]);
+      if (error) {
+        console.log(error);
+        throw new Error(error.message);
+      }
 
-      await supabase.from("user").insert(insertingData);
+      console.log("User created");
       break;
     case "user.deleted":
       await supabase.from("user").delete().eq("id", payload.data.id);
       break;
-
     case "user.updated":
       await supabase
         .from("user")
@@ -67,12 +75,14 @@ export async function POST(request: Request) {
           image: payload.data.profile_image_url,
         })
         .eq("id", payload.data.id);
-
+    case "role.updated":
+      console.log(payload);
+      break;
     default:
       throw new Error("Invalid event type");
   }
 
-  return Response.json({ message: "Received event" });
+  return Response.json({ message: "Received event" }, { status: 201 });
 }
 
 export async function GET() {

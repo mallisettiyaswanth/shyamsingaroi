@@ -22,7 +22,7 @@ export default function ResponsiveNavbar() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-300">
         <nav className="flex flex-col p-5 px-8">
           <div className="flex justify-between items-center">
