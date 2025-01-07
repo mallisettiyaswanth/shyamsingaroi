@@ -16,7 +16,9 @@ export default function layout({ children }: { children: React.ReactNode }) {
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h1>Admin Portal - Shyam silks</h1>
         </header>
-        {children}
+        <div className="h-full w-full flex flex-col items-center justify-center">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -2,6 +2,11 @@
 const nextConfig = {
   images: {
     domains: ["www.cmrshoppingmall.in"],
+    remotePatterns: [
+      {
+        hostname: "trzdpdbggkhsashrxewd.supabase.co",
+      },
+    ],
   },
 };
 
