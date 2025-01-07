@@ -3,8 +3,18 @@ import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/cart(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/login",
+  "/signup",
+  "/api/webhooks/clerk",
+]);
 
 export default clerkMiddleware(async (auth, req) => {
+  if (isPublicRoute(req)) {
+    return;
+  }
+
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
