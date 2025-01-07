@@ -10,6 +10,7 @@ type Product = {
   barcode: string;
   price: number;
   brand: string;
+  discount: number;
   images:
     | {
         id: number;
@@ -61,6 +62,7 @@ const getProduct = async (productId: number) => {
     barcode: string;
     price: number;
     brand: string;
+    discount: number;
     images:
       | {
           id: number;
@@ -80,6 +82,7 @@ const getProduct = async (productId: number) => {
     images: product.images,
     price: product.price,
     brand: product.brand,
+    discount: product.discount,
   };
 
   return {
