@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import getInitialFormValues from "@/actions/supabase/initial-form";
+import addTag from "@/actions/supabase/add-tag";
 
 type Props = {
   callback: () => void;
@@ -41,7 +42,7 @@ const AddTags = ({ callback }: Props) => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["add-tag"],
     mutationFn: async (values: FormValues) => {
-      console.log("Submitted values:", values);
+      return addTag(values.tag);
     },
     onSuccess(data, variables, context) {
       callback();
