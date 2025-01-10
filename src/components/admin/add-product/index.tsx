@@ -10,15 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -39,7 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import AddCategoryForm from "../add-category";
@@ -47,12 +39,16 @@ import getTags from "@/actions/supabase/tags";
 import AddTags from "../add-tags";
 import AddSize from "../add-size";
 import Spinner from "@/components/global/spinner";
+import getSizes from "@/actions/supabase/sizes";
 
 type Props = {};
 
 const AddProductForm = (props: Props) => {
   const [gender, setGender] = useState<string | null>(null);
   const [genderPopup, setGenderPopup] = useState<boolean>(false);
+  const [newCategoryModal, setNewCategoryModal] = useState<boolean>(false);
+  const [newTagModal, setNewTagModal] = useState<boolean>(false);
+  const [newSizeModal, setNewSizeModal] = useState<boolean>(false);
   const {
     data: initialValues,
     isLoading,
@@ -65,18 +61,22 @@ const AddProductForm = (props: Props) => {
     queryKey: ["tags"],
     queryFn: () => getTags(),
   });
+  const { data: sizesData, isLoading: sizesLoading } = useQuery({
+    queryKey: ["sizes"],
+    queryFn: () => getSizes(),
+  });
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {},
     mutationKey: ["add-product"],
   });
 
-  console.log(initialValues);
   const form = useForm();
 
   const onSubmit = () => {};
-  if (isLoading) return <div>Loading...</div>;
-  if (!initialValues) return <div>No data available</div>;
+  if (isLoading || tagsLoading || sizesLoading) return <div>Loading...</div>;
+  if (!initialValues || !tagsData || !sizesData)
+    return <div>No data available</div>;
 
   return (
     <div className="flex p-3 h-full">
@@ -137,7 +137,7 @@ const AddProductForm = (props: Props) => {
                     className="h-9"
                   />
                   <CommandList>
-                    <CommandEmpty>No framework found.</CommandEmpty>
+                    <CommandEmpty>No gender found.</CommandEmpty>
                     <CommandGroup>
                       {Object.keys(initialValues).map((genderValue) => {
                         return (
@@ -207,7 +207,10 @@ const AddProductForm = (props: Props) => {
               <FormItem className="w-full">
                 <div className="w-full flex justify-between">
                   <FormLabel>Category</FormLabel>
-                  <Dialog>
+                  <Dialog
+                    open={newCategoryModal}
+                    onOpenChange={setNewCategoryModal}
+                  >
                     <DialogTrigger>
                       <Button
                         variant="ghost"
@@ -218,7 +221,12 @@ const AddProductForm = (props: Props) => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
-                      <AddCategoryForm callback={() => refetch()} />
+                      <AddCategoryForm
+                        callback={() => {
+                          refetch();
+                          setNewCategoryModal(false);
+                        }}
+                      />
                     </DialogContent>
                   </Dialog>
                 </div>
@@ -259,7 +267,7 @@ const AddProductForm = (props: Props) => {
               <FormItem className="w-full">
                 <div className="w-full flex justify-between">
                   <FormLabel>Tags</FormLabel>
-                  <Dialog>
+                  <Dialog open={newTagModal} onOpenChange={setNewTagModal}>
                     <DialogTrigger>
                       <Button
                         variant="ghost"
@@ -270,7 +278,12 @@ const AddProductForm = (props: Props) => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
-                      <AddTags callback={() => refetch()} />
+                      <AddTags
+                        callback={() => {
+                          refetch();
+                          setNewTagModal(false);
+                        }}
+                      />
                     </DialogContent>
                   </Dialog>
                 </div>
@@ -294,7 +307,7 @@ const AddProductForm = (props: Props) => {
               <FormItem className="w-full">
                 <div className="w-full flex justify-between">
                   <FormLabel>Sizes</FormLabel>
-                  <Dialog>
+                  <Dialog open={newSizeModal} onOpenChange={setNewSizeModal}>
                     <DialogTrigger>
                       <Button
                         variant="ghost"
@@ -305,12 +318,21 @@ const AddProductForm = (props: Props) => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
-                      <AddSize callback={() => refetch()} />
+                      <AddSize
+                        callback={() => {
+                          refetch();
+                          setNewSizeModal(false);
+                        }}
+                      />
                     </DialogContent>
                   </Dialog>
                 </div>
                 <FormControl>
-                  <MultiSelect options={[]} onValueChange={() => {}} />
+                  <MultiSelect
+                    // @ts-ignore
+                    options={sizesData[gender] ?? []}
+                    onValueChange={() => {}}
+                  />
                 </FormControl>
                 <FormDescription className="text-xs">
                   add sizes for your product.

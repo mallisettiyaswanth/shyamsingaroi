@@ -2,26 +2,20 @@
 
 import { createClient } from "@/actions/server";
 
-const getInitialFormValues = async () => {
+const getSizes = async () => {
   try {
     const supabase = await createClient();
-
-    const { data: categories, error } = await supabase
-      .from("categories")
-      .select("*");
-
+    const { data: sizes, error } = await supabase.from("size").select("*");
     if (error) {
-      console.error("Error fetching categories:", error.message);
-      return null;
+      throw new Error(error.message);
     }
-
     const result: Record<string, Set<string>> = {};
 
-    categories?.forEach((doc) => {
+    sizes?.forEach((doc) => {
       if (!result[doc.gender]) {
         result[doc.gender] = new Set();
       }
-      result[doc.gender].add(doc.category);
+      result[doc.gender].add(doc.size);
     });
 
     const formattedResult: Record<string, string[]> = Object.fromEntries(
@@ -41,19 +35,22 @@ const getInitialFormValues = async () => {
         newResult[gender] = [];
       }
 
-      newResult[gender] = formattedResult[gender].map((category) => {
+      newResult[gender] = formattedResult[gender].map((size) => {
         return {
-          label: (category?.at(0) ?? "").toUpperCase() + category.slice(1),
-          value: category,
+          label: (size?.at(0) ?? "").toUpperCase() + size.slice(1),
+          value: size,
         };
       });
     });
 
     return newResult;
   } catch (err) {
-    console.error("Error in getInitialFormValues:", err);
-    return null;
+    console.log(err);
+    return {
+      status: 500,
+      message: "Something went wrong!",
+    };
   }
 };
 
-export default getInitialFormValues;
+export default getSizes;

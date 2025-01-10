@@ -10,10 +10,17 @@ const getTags = async () => {
       throw new Error("Error fetching tags");
     }
 
+    const formattedTags = tags.map((tag) => {
+      return {
+        label: tag.tag.at(0).toUpperCase() + tag.tag.slice(1),
+        value: tag.tag,
+      };
+    });
+
     return {
       status: 200,
       message: "Success",
-      data: tags,
+      data: formattedTags,
     };
   } catch (err) {
     console.log(err);

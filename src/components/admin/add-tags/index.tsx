@@ -18,6 +18,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import getInitialFormValues from "@/actions/supabase/initial-form";
 import addTag from "@/actions/supabase/add-tag";
+import { toast } from "sonner";
 
 type Props = {
   callback: () => void;
@@ -39,7 +40,7 @@ const AddTags = ({ callback }: Props) => {
     resolver: zodResolver(schema),
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["add-tag"],
     mutationFn: async (values: FormValues) => {
       return addTag(values.tag);
@@ -51,7 +52,11 @@ const AddTags = ({ callback }: Props) => {
 
   const onSubmit = (values: FormValues) => {
     console.log("onSubmit Values:", values);
-    mutate(values);
+    toast.promise(mutateAsync(values), {
+      loading: "Adding tag...",
+      success: "Tag added successfully",
+      error: "Failed to add",
+    });
   };
 
   if (isLoading) return <div>Loading...</div>;

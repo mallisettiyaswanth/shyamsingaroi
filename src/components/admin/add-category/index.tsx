@@ -33,6 +33,8 @@ import {
 import getInitialFormValues from "@/actions/supabase/initial-form";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { addCategory } from "@/actions/supabase/add-category";
 
 type Props = {
   callback: () => void;
@@ -61,19 +63,21 @@ const AddCategoryForm = ({ callback }: Props) => {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["add-category"],
-    mutationFn: async (values: FormValues) => {
-      console.log("Submitted values:", values);
-    },
+    mutationFn: (values: FormValues) =>
+      addCategory(values.category, values.gender),
     onSuccess(data, variables, context) {
       callback();
     },
   });
 
   const onSubmit = (values: FormValues) => {
-    console.log("onSubmit Values:", values);
-    mutate(values);
+    toast.promise(mutateAsync(values), {
+      loading: "Adding category...",
+      success: "Category added successfully",
+      error: "Failed to add category",
+    });
   };
 
   if (isLoading) return <div>Loading...</div>;
