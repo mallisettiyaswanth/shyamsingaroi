@@ -40,8 +40,37 @@ import AddTags from "../add-tags";
 import AddSize from "../add-size";
 import Spinner from "@/components/global/spinner";
 import getSizes from "@/actions/supabase/sizes";
+import { z } from "zod";
+import { Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
+
+const schema = z.object({
+  name: z.string().nonempty("Name is required"),
+  barcode: z.string().nonempty("Barcode is required"),
+  price: z.number().nonnegative("Price is required"),
+  description: z.string().nonempty("Description is required"),
+  category: z.array(z.string()).nonempty("Category is required"),
+  brand: z.string().nonempty("Brand is required"),
+  tags: z.array(z.string()).nonempty("Tags are required"),
+  sizes: z.array(z.string()).nonempty("Sizes are required"),
+  gender: z.string().nonempty("Gender is required"),
+  images: z
+    .array(
+      z
+        .instanceof(File)
+        .refine((file) => file.size > 0, "File cannot be empty")
+        .refine(
+          (file) =>
+            ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
+          "Only JPEG and PNG formats are allowed"
+        )
+    )
+    .nonempty("At least one image is required"),
+});
+
+type FormValues = z.infer<typeof schema>;
 
 const AddProductForm = (props: Props) => {
   const [gender, setGender] = useState<string | null>(null);
@@ -66,14 +95,21 @@ const AddProductForm = (props: Props) => {
     queryFn: () => getSizes(),
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: async () => {},
     mutationKey: ["add-product"],
   });
 
-  const form = useForm();
+  console.log(initialValues);
 
-  const onSubmit = () => {};
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = (values: FormValues) => {
+    console.log(values);
+  };
+
   if (isLoading || tagsLoading || sizesLoading) return <div>Loading...</div>;
   if (!initialValues || !tagsData || !sizesData)
     return <div>No data available</div>;
@@ -118,55 +154,63 @@ const AddProductForm = (props: Props) => {
             )}
           />
 
-          <div className="w-full flex flex-col gap-2 py-2">
-            <Label>Gender</Label>
-            <Popover open={genderPopup} onOpenChange={setGenderPopup}>
-              <PopoverTrigger className="w-full" asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className="w-full justify-between"
-                >
-                  {gender ? gender : "Select gender"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command className="w-full">
-                  <CommandInput
-                    placeholder="Search framework..."
-                    className="h-9"
-                  />
-                  <CommandList>
-                    <CommandEmpty>No gender found.</CommandEmpty>
-                    <CommandGroup>
-                      {Object.keys(initialValues).map((genderValue) => {
-                        return (
-                          <CommandItem
-                            key={genderValue}
-                            value={genderValue}
-                            onSelect={(currentValue) => {
-                              setGender(currentValue);
-                              setGenderPopup(false);
-                            }}
-                          >
-                            {genderValue}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                gender === genderValue
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Gender</FormLabel>
+                <Popover open={genderPopup} onOpenChange={setGenderPopup}>
+                  <PopoverTrigger className="w-full" asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {field.value ? field.value : "Select gender"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command className="w-full">
+                      <CommandInput
+                        placeholder="Search gender..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No gender found.</CommandEmpty>
+                        <CommandGroup>
+                          {Object.keys(initialValues).map((genderValue) => (
+                            <CommandItem
+                              key={genderValue}
+                              value={genderValue}
+                              onSelect={(currentValue) => {
+                                field.onChange(currentValue);
+                                setGenderPopup(false);
+                              }}
+                            >
+                              {genderValue}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  field.value === genderValue
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription className="text-xs">
+                  add gender for your product.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -231,10 +275,25 @@ const AddProductForm = (props: Props) => {
                   </Dialog>
                 </div>
                 <FormControl>
-                  <MultiSelect
-                    // @ts-ignore
-                    options={initialValues[gender] ?? []}
-                    onValueChange={() => {}}
+                  <Controller
+                    name="category"
+                    control={form.control}
+                    render={({ field: controllerField }) => {
+                      const selectedGender = form.watch("gender");
+                      const options =
+                        selectedGender && initialValues[selectedGender]
+                          ? initialValues[selectedGender]
+                          : [];
+
+                      return (
+                        <MultiSelect
+                          // @ts-ignore
+                          options={options}
+                          value={controllerField.value}
+                          onValueChange={controllerField.onChange}
+                        />
+                      );
+                    }}
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -251,7 +310,7 @@ const AddProductForm = (props: Props) => {
               <FormItem className="w-full">
                 <FormLabel>Brand</FormLabel>
                 <FormControl>
-                  <Input placeholder="enter brand" />
+                  <Input placeholder="enter brand" {...field} />
                 </FormControl>
                 <FormDescription className="text-xs">
                   add brand for your product.
@@ -288,9 +347,16 @@ const AddProductForm = (props: Props) => {
                   </Dialog>
                 </div>
                 <FormControl>
-                  <MultiSelect
-                    options={tagsData?.data ?? []}
-                    onValueChange={() => {}}
+                  <Controller
+                    name="tags"
+                    control={form.control}
+                    render={({ field: controllerField }) => (
+                      <MultiSelect
+                        options={tagsData.data ?? []}
+                        value={controllerField.value}
+                        onValueChange={controllerField.onChange}
+                      />
+                    )}
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -328,10 +394,26 @@ const AddProductForm = (props: Props) => {
                   </Dialog>
                 </div>
                 <FormControl>
-                  <MultiSelect
-                    // @ts-ignore
-                    options={sizesData[gender] ?? []}
-                    onValueChange={() => {}}
+                  <Controller
+                    name="sizes"
+                    control={form.control}
+                    render={({ field: controllerField }) => {
+                      const selectedGender = form.watch("gender");
+                      const options =
+                        // @ts-ignore
+                        selectedGender && sizesData[selectedGender]
+                          ? // @ts-ignore
+                            sizesData[selectedGender]
+                          : [];
+                      return (
+                        <MultiSelect
+                          // @ts-ignore
+                          options={sizesData[gender] ?? []}
+                          value={controllerField.value}
+                          onValueChange={controllerField.onChange}
+                        />
+                      );
+                    }}
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
@@ -343,15 +425,27 @@ const AddProductForm = (props: Props) => {
           />
           <FormField
             control={form.control}
-            name="sizes"
+            name="images"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Sizes</FormLabel>
+                <FormLabel>Upload Images</FormLabel>
                 <FormControl>
-                  <Input type="file" placeholder="choose your image" multiple />
+                  <Controller
+                    name="images"
+                    control={form.control}
+                    render={({ field: controllerField }) => (
+                      <Input
+                        type="file"
+                        multiple
+                        onChange={(event) => {
+                          controllerField.onChange(event.target.files);
+                        }}
+                      />
+                    )}
+                  />
                 </FormControl>
                 <FormDescription className="text-xs">
-                  upload images for your product.
+                  Upload images for your product.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
