@@ -3,6 +3,7 @@ import "./globals.css";
 import { Poppins } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
+import QueryWrapper from "@/wrapper/QueryWrapper";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
@@ -18,9 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ClerkProvider signInFallbackRedirectUrl="/admin">
-        <body className={poppins.className}>{children}</body>
-      </ClerkProvider>
+      <body className={poppins.className}>
+        <ClerkProvider signInFallbackRedirectUrl="/admin">
+          <QueryWrapper>{children}</QueryWrapper>
+        </ClerkProvider>
+      </body>
     </html>
   );
 }
