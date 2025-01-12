@@ -17,6 +17,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -25,8 +26,6 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  // const task = taskSchema.parse(row.original);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,14 +37,18 @@ export function DataTableRowActions<TData>({
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+      <DropdownMenuContent align="end" className="w-[160px] p-0">
+        <div className="flex p-2 flex-col">
+          <DropdownMenuItem>Inspect</DropdownMenuItem>
+          <DropdownMenuItem>Edit</DropdownMenuItem>
+        </div>
+        <DropdownMenuItem className="p-0">
+          <Badge
+            className="w-full rounded-none p-2 font-normal text-center flex items-center justify-center"
+            variant="destructive"
+          >
+            Delete
+          </Badge>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

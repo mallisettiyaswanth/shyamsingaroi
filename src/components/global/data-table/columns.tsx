@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from "@/components/global/data-table/data-table
 import { DataTableRowActions } from "@/components/global/data-table/data-table-row-actions";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -40,7 +41,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => (
       <div className="w-[150px] capitalize flex gap-2">
         <img
-          src={row.original.images[0]}
+          src={row.original.images[0]?.url}
           alt=""
           className="w-6 h-6 rounded-sm"
         />
@@ -51,14 +52,14 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "meta.barcode",
+    accessorKey: "barcode",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Barcode" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex w-[150px] items-center">
-          <span className="capitalize">{row.original.meta.barcode}</span>
+        <div className="flex w-fit items-center">
+          <span className="capitalize">{row.original.barcode}</span>
         </div>
       );
     },
@@ -66,79 +67,6 @@ export const columns: ColumnDef<Product>[] = [
       const rowDate = new Date(row.getValue(id));
       const [startDate, endDate] = value;
       return rowDate >= startDate && rowDate <= endDate;
-    },
-  },
-
-  {
-    accessorKey: "category",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex w-[150px] items-center">
-          <span className="capitalize"> {row.getValue("category")}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "price",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price" />
-    ),
-    cell: ({ row }) => {
-      const type = row.getValue("price");
-      return (
-        <div className="flex w-[100px] items-center">
-          <span className="capitalize"> {row.getValue("price")} Rs</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "brand",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Brand" />
-    ),
-    cell: ({ row }) => {
-      const type = row.getValue("brand");
-      return (
-        <div className="flex w-[100px] items-center">
-          <span
-            className={cn(
-              "capitalize",
-              type === "income" ? "text-green-500" : "text-red-500"
-            )}
-          >
-            {row.getValue("brand")}
-          </span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "description",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="description" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium capitalize">
-            {row.getValue("description")}
-          </span>
-        </div>
-      );
     },
   },
   {
@@ -150,7 +78,7 @@ export const columns: ColumnDef<Product>[] = [
       return (
         <div className={"flex gap-1"}>
           {(row.original.sizes || [])?.map((size) => {
-            return <div className="">{size}</div>;
+            return <div className="">{size.size}</div>;
           })}
         </div>
       );
@@ -159,12 +87,82 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "meta.created_at",
+    accessorKey: "price",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Price" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize line-through decoration-red-400">
+            {row.getValue("price")} Rs
+          </span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "discount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Discount" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <Badge
+            variant="secondary"
+            className="capitalize font-normal bg-green-600 text-white hover:bg-green-600"
+          >
+            {row.getValue("discount")} %
+          </Badge>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "actual_price",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Actual Price" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize text-green-600">
+            {row.getValue("actual_price")} Rs
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "brand",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Brand" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex w-[100px] items-center">
+          <span className="capitalize">{row.getValue("brand")}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "created_at",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.meta.created_at);
+      const date = new Date(row.original.created_at);
       const formattedDate = date.toLocaleDateString("en-US", {
         day: "2-digit",
         month: "short",
@@ -182,7 +180,6 @@ export const columns: ColumnDef<Product>[] = [
       return rowDate >= startDate && rowDate <= endDate;
     },
   },
-
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,
