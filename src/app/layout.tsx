@@ -19,11 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ClerkProvider signInFallbackRedirectUrl="/admin">
-        <QueryWrapper>
-          <body className={poppins.className}>{children}</body>
-        </QueryWrapper>
-      </ClerkProvider>
+      <body className={poppins.className}>
+        <ClerkProvider signInFallbackRedirectUrl="/admin">
+          <QueryWrapper>{children}</QueryWrapper>
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

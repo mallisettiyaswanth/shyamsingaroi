@@ -21,7 +21,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Popover,
@@ -43,13 +42,18 @@ import getSizes from "@/actions/supabase/sizes";
 import { z } from "zod";
 import { Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import addProduct from "@/actions/supabase/add-product";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 
 type Props = {};
 
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
   barcode: z.string().nonempty("Barcode is required"),
-  price: z.number().nonnegative("Price is required"),
+  price: z.string().nonempty("Price is required"),
+  discount: z.string().nonempty("discount is required"),
+  stock: z.string().nonempty("stock is required"),
   description: z.string().nonempty("Description is required"),
   category: z.array(z.string()).nonempty("Category is required"),
   brand: z.string().nonempty("Brand is required"),
@@ -57,23 +61,39 @@ const schema = z.object({
   sizes: z.array(z.string()).nonempty("Sizes are required"),
   gender: z.string().nonempty("Gender is required"),
   images: z
-    .array(
-      z
-        .instanceof(File)
-        .refine((file) => file.size > 0, "File cannot be empty")
-        .refine(
-          (file) =>
-            ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
-          "Only JPEG and PNG formats are allowed"
-        )
-    )
-    .nonempty("At least one image is required"),
+    .instanceof(FileList)
+    .refine((file) => file.length > 0, "File cannot be empty")
+    .refine((list) => list.length <= 5, "Maximum 5 files allowed")
+    .transform((files) => Array.from(files))
+    .refine((files) => {
+      const allowedTypes: { [key: string]: boolean } = {
+        "image/jpeg": true,
+        "image/png": true,
+        "image/jpg": true,
+      };
+      return files.every((file) => allowedTypes[file.type]);
+    }),
+});
+
+const valuesSchema = z.object({
+  name: z.string().nonempty("Name is required"),
+  barcode: z.string().nonempty("Barcode is required"),
+  price: z.string().nonempty("Price is required"),
+  discount: z.string().nonempty("discount is required"),
+  stock: z.string().nonempty("stock is required"),
+  description: z.string().nonempty("Description is required"),
+  category: z.array(z.string()).nonempty("Category is required"),
+  brand: z.string().nonempty("Brand is required"),
+  tags: z.array(z.string()).nonempty("Tags are required"),
+  sizes: z.array(z.string()).nonempty("Sizes are required"),
+  gender: z.string().nonempty("Gender is required"),
+  images: z.array(z.string()).nonempty("Images are required"),
 });
 
 type FormValues = z.infer<typeof schema>;
+type ValuesType = z.infer<typeof valuesSchema>;
 
 const AddProductForm = (props: Props) => {
-  const [gender, setGender] = useState<string | null>(null);
   const [genderPopup, setGenderPopup] = useState<boolean>(false);
   const [newCategoryModal, setNewCategoryModal] = useState<boolean>(false);
   const [newTagModal, setNewTagModal] = useState<boolean>(false);
@@ -95,19 +115,61 @@ const AddProductForm = (props: Props) => {
     queryFn: () => getSizes(),
   });
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: async () => {},
+  const { mutate, mutateAsync, isPending } = useMutation({
+    mutationFn: async (values: ValuesType) => {
+      return await addProduct(values);
+    },
     mutationKey: ["add-product"],
+    onError: (error) => {
+      console.error("Failed to add product:", error);
+    },
+    onSuccess: (data) => {
+      console.log("Product added successfully:", data);
+    },
   });
 
-  console.log(initialValues);
+  console.log({ initialValues, sizesData, tagsData });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
+  const onSubmit = async (values: FormValues) => {
+    return toast.promise(
+      async () => {
+        try {
+          const supabase = createClient();
+          const uploadPromises = values.images.map(async (file) => {
+            const uniqueName = `${Date.now()}_${file.name}`;
+            const { data, error } = await supabase.storage
+              .from("shyamsilks")
+              .upload(uniqueName, file, {
+                cacheControl: "3600",
+                upsert: false,
+              });
+            if (error) {
+              throw new Error(
+                `Failed to upload ${file.name}: ${error.message}`
+              );
+            }
+            return `https://trzdpdbggkhsashrxewd.supabase.co/storage/v1/object/public/${data.fullPath}`;
+          });
+          const uploadedImages = await Promise.all(uploadPromises);
+          const transformedValues: ValuesType = {
+            ...values,
+            images: uploadedImages as [string, ...string[]],
+          };
 
-  const onSubmit = (values: FormValues) => {
-    console.log(values);
+          return mutateAsync(transformedValues);
+        } catch (error) {
+          console.error("Error during submission:", error);
+        }
+      },
+      {
+        loading: "Adding product...",
+        success: "Product added successfully",
+        error: "Failed to add product",
+      }
+    );
   };
 
   if (isLoading || tagsLoading || sizesLoading) return <div>Loading...</div>;
@@ -223,6 +285,38 @@ const AddProductForm = (props: Props) => {
                 </FormControl>
                 <FormDescription className="text-xs">
                   add price for your product. (in INR)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="discount"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Discount</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Discount" {...field} />
+                </FormControl>
+                <FormDescription className="text-xs">
+                  add discount for your product. (in %)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="stock"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Stock</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="Stock" {...field} />
+                </FormControl>
+                <FormDescription className="text-xs">
+                  add available stock for your product.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -408,7 +502,7 @@ const AddProductForm = (props: Props) => {
                       return (
                         <MultiSelect
                           // @ts-ignore
-                          options={sizesData[gender] ?? []}
+                          options={options}
                           value={controllerField.value}
                           onValueChange={controllerField.onChange}
                         />

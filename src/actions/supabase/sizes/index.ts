@@ -9,18 +9,19 @@ const getSizes = async () => {
     if (error) {
       throw new Error(error.message);
     }
-    const result: Record<string, Set<string>> = {};
+    const result: Record<string, Set<{ id: string; size: string }>> = {};
 
     sizes?.forEach((doc) => {
       if (!result[doc.gender]) {
         result[doc.gender] = new Set();
       }
-      result[doc.gender].add(doc.size);
+      result[doc.gender].add({ size: doc.size, id: doc.id });
     });
 
-    const formattedResult: Record<string, string[]> = Object.fromEntries(
-      Object.entries(result).map(([key, value]) => [key, Array.from(value)])
-    );
+    const formattedResult: Record<string, { id: string; size: string }[]> =
+      Object.fromEntries(
+        Object.entries(result).map(([key, value]) => [key, Array.from(value)])
+      );
 
     const newResult: Record<
       string,
@@ -35,10 +36,10 @@ const getSizes = async () => {
         newResult[gender] = [];
       }
 
-      newResult[gender] = formattedResult[gender].map((size) => {
+      newResult[gender] = formattedResult[gender].map(({ id, size }) => {
         return {
           label: (size?.at(0) ?? "").toUpperCase() + size.slice(1),
-          value: size,
+          value: id + "",
         };
       });
     });

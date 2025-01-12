@@ -13,7 +13,7 @@ const getTags = async () => {
     const formattedTags = tags.map((tag) => {
       return {
         label: tag.tag.at(0).toUpperCase() + tag.tag.slice(1),
-        value: tag.tag,
+        value: tag.id + "",
       };
     });
 
