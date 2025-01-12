@@ -11,11 +11,11 @@ export default function Page() {
     queryFn: () => getProducts(),
   });
   console.log(data);
-  return (  
+  return (
     <section className="flex flex-col flex-grow p-5 overflow-hidden gap-5 w-full h-full">
       <h1 className="text-2xl">Product list</h1>
       <div className="max-w-6xl">
-        {/* <DataTable columns={columns} data={products ?? []} /> */}
+        <DataTable columns={columns} data={data?.data ?? []} />
       </div>
     </section>
   );

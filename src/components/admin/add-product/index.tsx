@@ -46,7 +46,6 @@ import addProduct from "@/actions/supabase/product/add-product";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 
-type Props = {};
 
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -93,7 +92,11 @@ const valuesSchema = z.object({
 type FormValues = z.infer<typeof schema>;
 type ValuesType = z.infer<typeof valuesSchema>;
 
-const AddProductForm = (props: Props) => {
+type Props = {
+  product?: FormValues;
+};
+
+const AddProductForm = ({ product }: Props) => {
   const [genderPopup, setGenderPopup] = useState<boolean>(false);
   const [newCategoryModal, setNewCategoryModal] = useState<boolean>(false);
   const [newTagModal, setNewTagModal] = useState<boolean>(false);
@@ -115,7 +118,7 @@ const AddProductForm = (props: Props) => {
     queryFn: () => getSizes(),
   });
 
-  const { mutate, mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: async (values: ValuesType) => {
       return await addProduct(values);
     },
@@ -128,10 +131,20 @@ const AddProductForm = (props: Props) => {
     },
   });
 
-  console.log({ initialValues, sizesData, tagsData });
-
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: product?.name ?? "",
+      barcode: product?.barcode ?? "",
+      price: product?.price ?? "",
+      discount: product?.discount ?? "",
+      stock: product?.stock ?? "",
+      description: product?.description ?? "",
+      category: product?.category ?? [],
+      brand: product?.brand ?? "",
+      tags: product?.tags ?? [],
+      sizes: product?.sizes ?? [],
+    },
   });
   const onSubmit = async (values: FormValues) => {
     return toast.promise(
