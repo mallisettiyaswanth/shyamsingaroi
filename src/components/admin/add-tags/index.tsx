@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import getInitialFormValues from "@/actions/supabase/initial-form";
-import addTag from "@/actions/supabase/add-tag";
+import addTag from "@/actions/supabase/tags/add-tag";
 import { toast } from "sonner";
 
 type Props = {

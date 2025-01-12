@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import getInitialFormValues from "@/actions/supabase/initial-form";
-import addSize from "@/actions/supabase/add-size";
+import addSize from "@/actions/supabase/sizes/add-size";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import {

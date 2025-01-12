@@ -34,7 +34,7 @@ import getInitialFormValues from "@/actions/supabase/initial-form";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { addCategory } from "@/actions/supabase/add-category";
+import { addCategory } from "@/actions/supabase/category/add-category";
 
 type Props = {
   callback: () => void;

@@ -42,7 +42,7 @@ import getSizes from "@/actions/supabase/sizes";
 import { z } from "zod";
 import { Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import addProduct from "@/actions/supabase/add-product";
+import addProduct from "@/actions/supabase/product/add-product";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 
