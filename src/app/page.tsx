@@ -10,10 +10,7 @@ import logo from "@/../public/Logo.png";
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
-      {/* Header */}
       <Navbar />
-
-      {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-purple-50 to-transparent pt-32">
         <div className="container mx-auto px-4">
           <div className="w-full flex items-center justify-center">
@@ -43,12 +40,14 @@ export default function Home() {
                 </Badge>
                 <h2 className="text-4xl font-bold mb-2">Men's Collection</h2>
                 <p className="text-lg mb-4">Elevate your style</p>
-                <Button
-                  size="lg"
-                  className="bg-white text-blue-600 hover:bg-blue-50"
-                >
-                  Shop Now
-                </Button>
+                <Link href="/men">
+                  <Button
+                    size="lg"
+                    className="bg-white text-blue-600 hover:bg-blue-50"
+                  >
+                    Shop Now
+                  </Button>
+                </Link>
               </div>
             </Link>
             <Link
@@ -68,12 +67,14 @@ export default function Home() {
                 </Badge>
                 <h2 className="text-4xl font-bold mb-2">Women's Collection</h2>
                 <p className="text-lg mb-4">Express yourself</p>
-                <Button
-                  size="lg"
-                  className="bg-white text-pink-600 hover:bg-pink-50"
-                >
-                  Shop Now
-                </Button>
+                <Link href="/women">
+                  <Button
+                    size="lg"
+                    className="bg-white text-pink-600 hover:bg-pink-50"
+                  >
+                    Shop Now
+                  </Button>
+                </Link>
               </div>
             </Link>
           </div>
