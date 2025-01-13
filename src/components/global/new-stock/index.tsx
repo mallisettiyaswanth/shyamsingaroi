@@ -174,37 +174,8 @@ export default function NewStock() {
                           className="object-cover"
                         />
                       </div>
-
-                      {/* Action Buttons - Always Visible */}
-                      {/* <div className="absolute right-4 top-4 flex flex-col gap-2">
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
-                    >
-                      <Search className="h-4 w-4" />
-                      <span className="sr-only">Quick view</span>
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
-                    >
-                      <Heart className="h-4 w-4" />
-                      <span className="sr-only">Add to wishlist</span>
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
-                    >
-                      <BarChart2 className="h-4 w-4" />
-                      <span className="sr-only">Compare</span>
-                    </Button>
-                  </div> */}
                     </div>
 
-                    {/* Product Info */}
                     <div className="pt-4">
                       <Link href="#" className="block ">
                         <h3 className="text-sm text-gray-700 font-medium line-clamp-2">
