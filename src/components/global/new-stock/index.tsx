@@ -3,42 +3,102 @@
 import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function NewStock() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const fashionImages = [
+  const products = [
     {
-      src: "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/8/9/8905661303144_7_.jpg",
-      alt: "Fashion model in brown outfit",
+      id: 1,
+      name: "Peach Embroidered Kurta",
+      price: "₹1,139.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
     },
     {
-      src: "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/8/9/8905661303144_7_.jpg",
-      alt: "Fashion model in salmon suit",
+      id: 2,
+      name: "Navy Blue Embroidered Kurta",
+      price: "₹1,679.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
     },
     {
-      src: "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/8/9/8905661303144_7_.jpg",
-      alt: "Fashion model in white outfit",
+      id: 3,
+      name: "Yellow Printed Kurta Set",
+      price: "₹2,999.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
     },
     {
-      src: "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/8/9/8905661303144_7_.jpg",
-      alt: "Fashion model in orange hoodie",
+      id: 4,
+      name: "Cream Cotton Kurta with Floral Prints",
+      price: "₹1,559.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
     },
     {
-      src: "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/8/9/8905661303144_7_.jpg",
-      alt: "Fashion model in white turtleneck",
+      id: 5,
+      name: "Green Embroidered Anarkali",
+      price: "₹2,299.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
+    },
+    {
+      id: 6,
+      name: "Pink Floral Kurta Set",
+      price: "₹1,899.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
+    },
+    {
+      id: 7,
+      name: "Blue Printed Straight Kurta",
+      price: "₹1,459.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
+    },
+    {
+      id: 8,
+      name: "Maroon Embellished Kurta",
+      price: "₹2,159.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
+    },
+    {
+      id: 9,
+      name: "White Chikankari Kurta",
+      price: "₹1,799.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
+    },
+    {
+      id: 10,
+      name: "Beige Embroidered Anarkali",
+      price: "₹2,499.00",
+      image:
+        "https://www.cmrshoppingmall.in/media/catalog/product/cache/545296cc39c6d1f702d8d23f874257e0/a/s/as72200_3_.jpg",
     },
   ];
-
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === fashionImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === products.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? fashionImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? products.length - 1 : prevIndex - 1
     );
   };
 
@@ -46,6 +106,19 @@ export default function NewStock() {
     const interval = setInterval(nextSlide, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const [api] = useEmblaCarousel(
+    {
+      align: "start",
+      loop: true,
+    },
+    [
+      Autoplay({
+        delay: 3000,
+        stopOnInteraction: false,
+      }),
+    ]
+  );
 
   return (
     <div className="min-h-screen  relative overflow-hidden">
@@ -70,48 +143,88 @@ export default function NewStock() {
           </button>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          <div className="relative flex justify-center items-center">
-            <button
-              onClick={prevSlide}
-              className="absolute left-2 md:left-6 z-10 p-3 rounded-full bg-transperant text-black border border-gray-600 hover:bg-black hover:text-white transition-all"
-            >
-              <ArrowRight className="w-6 h-6 rotate-180 " />
-            </button>
-
-            <div className="relative w-full overflow-hidden">
-              <div
-                className="flex transition-transform duration-700 ease-in-out"
-                style={{
-                  transform: `translateX(-${currentIndex * 100}%)`,
-                }}
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          plugins={[
+            Autoplay({
+              delay: 3000,
+              stopOnInteraction: false,
+            }),
+          ]}
+          className="w-full mt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4 gap-5 ">
+            {products.map((product) => (
+              <CarouselItem
+                key={product.id}
+                className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
               >
-                {fashionImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className="w-full flex-shrink-0 flex justify-center items-center"
-                  >
-                    <div className="relative rounded-xl border border-gray-300 overflow-hidden w-[280px] md:w-[400px] h-[400px] md:h-[600px] shadow-lg">
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+                <Card className="border-none shadow-none">
+                  <CardContent className="p-0">
+                    <div className="relative">
+                      {/* Product Image */}
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
 
-            <button
-              onClick={nextSlide}
-              className="absolute right-2 md:right-6 z-10 p-3 rounded-full  bg-transperant text-black border border-gray-600 hover:bg-black hover:text-white  transition-all"
-            >
-              <ArrowRight className="w-6 h-6" />
-            </button>
+                      {/* Action Buttons - Always Visible */}
+                      {/* <div className="absolute right-4 top-4 flex flex-col gap-2">
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
+                    >
+                      <Search className="h-4 w-4" />
+                      <span className="sr-only">Quick view</span>
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
+                    >
+                      <Heart className="h-4 w-4" />
+                      <span className="sr-only">Add to wishlist</span>
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm"
+                    >
+                      <BarChart2 className="h-4 w-4" />
+                      <span className="sr-only">Compare</span>
+                    </Button>
+                  </div> */}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="pt-4">
+                      <Link href="#" className="block ">
+                        <h3 className="text-sm text-gray-700 font-medium line-clamp-2">
+                          {product.name}
+                        </h3>
+                        <p className="mt-1 text-sm font-semibold text-gray-900">
+                          {product.price}
+                        </p>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-center gap-2 mt-4 md:mt-0">
+            <CarouselPrevious className="relative md:absolute -left-12 h-12 w-12 rounded-full border-2" />
+            <CarouselNext className="relative md:absolute -right-12 h-12 w-12 rounded-full border-2" />
           </div>
-        </div>
+        </Carousel>
       </div>
     </div>
   );

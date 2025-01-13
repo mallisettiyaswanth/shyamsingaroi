@@ -38,7 +38,7 @@ export default function FeaturesSection() {
   return (
     <section className="w-full py-12 bg-gray-50 flex justify-center">
       <div className="container px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature) => (
             <div
               key={feature.title}
@@ -47,7 +47,7 @@ export default function FeaturesSection() {
               <div className="flex flex-col h-full space-y-4">
                 <feature.icon className="w-10 h-10 text-white/90" />
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-lg font-bold text-white lg:text-xl">
                     {feature.title}
                   </h3>
                   <p className="text-white/90 text-sm leading-relaxed">
@@ -55,24 +55,7 @@ export default function FeaturesSection() {
                   </p>
                 </div>
               </div>
-              <div className="absolute right-4 bottom-4 opacity-0 transition-opacity group-hover:opacity-100">
-                {/* <div className="text-white/90 text-sm font-medium flex items-center">
-                  Learn More
-                  <svg
-                    className="w-4 h-4 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div> */}
-              </div>
+              <div className="absolute right-4 bottom-4 opacity-0 transition-opacity group-hover:opacity-100"></div>
             </div>
           ))}
         </div>
