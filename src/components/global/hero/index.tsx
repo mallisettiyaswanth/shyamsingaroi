@@ -8,7 +8,7 @@ type Props = {};
 
 const Hero = (props: Props) => {
   return (
-    <div className="px-2  lg:px-8 flex flex-col items-center min-h-screen">
+    <div className="px-2  lg:px-8 flex flex-col items-center min-h-screen mt-24">
       <div className="w-full rounded-lg overflow-hidden relative mx-auto shadow-lg">
         <img
           // src="https://img.freepik.com/free-photo/beautiful-african-model-with-perfect-curly-hairs-elegant-orange-blouse-silk-pants-sitting-vintage-chair-beige-wall_273443-4089.jpg?semt=ais_hybrid"
