@@ -1,3 +1,5 @@
+"use server";
+
 import { createClient } from "../server";
 
 type Product = {

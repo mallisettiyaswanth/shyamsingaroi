@@ -31,7 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Check, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import AddCategoryForm from "../add-category";
 import getTags from "@/actions/supabase/tags";
@@ -45,7 +45,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import addProduct from "@/actions/supabase/product/add-product";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-
+import getSingleProduct from "@/actions/supabase/product/get-product";
 
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -93,14 +93,26 @@ type FormValues = z.infer<typeof schema>;
 type ValuesType = z.infer<typeof valuesSchema>;
 
 type Props = {
-  product?: FormValues;
+  id?: number;
 };
 
-const AddProductForm = ({ product }: Props) => {
+const AddProductForm = ({ id }: Props) => {
   const [genderPopup, setGenderPopup] = useState<boolean>(false);
   const [newCategoryModal, setNewCategoryModal] = useState<boolean>(false);
   const [newTagModal, setNewTagModal] = useState<boolean>(false);
   const [newSizeModal, setNewSizeModal] = useState<boolean>(false);
+
+  const {
+    data: product,
+    isLoading: productLoading,
+    refetch: refetchProduct,
+  } = useQuery({
+    queryKey: ["intial-form-edit-values", id],
+    queryFn: () => getSingleProduct(id ?? 0),
+  });
+
+  console.log(product);
+
   const {
     data: initialValues,
     isLoading,
@@ -134,16 +146,18 @@ const AddProductForm = ({ product }: Props) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: product?.name ?? "",
-      barcode: product?.barcode ?? "",
-      price: product?.price ?? "",
-      discount: product?.discount ?? "",
-      stock: product?.stock ?? "",
-      description: product?.description ?? "",
-      category: product?.category ?? [],
-      brand: product?.brand ?? "",
-      tags: product?.tags ?? [],
-      sizes: product?.sizes ?? [],
+      name: "",
+      barcode: "",
+      price: "",
+      discount: "",
+      stock: "",
+      description: "",
+      category: [],
+      brand: "",
+      tags: [],
+      sizes: [],
+      gender: "",
+      images: [],
     },
   });
   const onSubmit = async (values: FormValues) => {
@@ -185,8 +199,29 @@ const AddProductForm = ({ product }: Props) => {
     );
   };
 
-  if (isLoading || tagsLoading || sizesLoading) return <div>Loading...</div>;
-  if (!initialValues || !tagsData || !sizesData)
+  useEffect(() => {
+    if (product?.data) {
+      
+      form.reset({
+        name: product.data.name ?? "",
+        barcode: product.data.barcode ?? "",
+        description: product.data.description ?? "",
+        brand: product.data.brand ?? "",
+        price: JSON.stringify(product.data.price) ?? "",
+        discount: JSON.stringify(product.data.discount) ?? "",
+        stock: JSON.stringify(product.data.stock) ?? "",
+        gender: product.data.categories[0].gender,
+        category: product.data.categories.map((category) => JSON.stringify(category.id)) ?? [],
+        tags: product.data.tags.map((tag) => JSON.stringify(tag.id)) ?? [],
+        sizes: product.data.sizes.map((size) => JSON.stringify(size.id)) ?? [],
+        images: [], // Images should remain empty as they are uploaded separately
+      });
+    }
+  }, [product, form]);
+
+  if (isLoading || tagsLoading || sizesLoading || productLoading)
+    return <div>Loading...</div>;
+  if (!initialValues || !tagsData || !sizesData || !product)
     return <div>No data available</div>;
 
   return (
@@ -364,6 +399,7 @@ const AddProductForm = ({ product }: Props) => {
                   >
                     <DialogTrigger>
                       <Button
+                        type="button"
                         variant="ghost"
                         className="p-0 h-fit hover:bg-transparent"
                       >
@@ -436,6 +472,7 @@ const AddProductForm = ({ product }: Props) => {
                   <Dialog open={newTagModal} onOpenChange={setNewTagModal}>
                     <DialogTrigger>
                       <Button
+                        type="button"
                         variant="ghost"
                         className="p-0 h-fit hover:bg-transparent"
                       >
@@ -483,6 +520,7 @@ const AddProductForm = ({ product }: Props) => {
                   <Dialog open={newSizeModal} onOpenChange={setNewSizeModal}>
                     <DialogTrigger>
                       <Button
+                        type="button"
                         variant="ghost"
                         className="p-0 h-fit hover:bg-transparent"
                       >
@@ -562,7 +600,7 @@ const AddProductForm = ({ product }: Props) => {
           <span></span>
 
           <div className="w-full h-full flex justify-center items-center">
-            <Button type="submit" className="h-fit w-fit">
+            <Button type="submit" className="h-fit w-fit font-normal">
               {isLoading || isPending ? <Spinner /> : "Add Product"}
             </Button>
           </div>

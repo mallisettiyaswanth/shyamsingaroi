@@ -69,23 +69,23 @@ export const columns: ColumnDef<Product>[] = [
       return rowDate >= startDate && rowDate <= endDate;
     },
   },
-  {
-    accessorKey: "sizes",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Sizes" />;
-    },
-    cell: ({ row }) => {
-      return (
-        <div className={"flex gap-1"}>
-          {(row.original.sizes || [])?.map((size) => {
-            return <div className="">{size.size}</div>;
-          })}
-        </div>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   accessorKey: "sizes",
+  //   header: ({ column }) => {
+  //     return <DataTableColumnHeader column={column} title="Sizes" />;
+  //   },
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div className={"flex gap-1"}>
+  //         {(row.original.sizes || [])?.map((size) => {
+  //           return <div className="">{size.size}</div>;
+  //         })}
+  //       </div>
+  //     );
+  //   },
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "price",
     header: ({ column }) => (

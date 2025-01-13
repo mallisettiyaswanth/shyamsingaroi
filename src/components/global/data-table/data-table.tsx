@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   SortingState,
@@ -27,11 +28,37 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { Product } from "./schema";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
+
+const getCommonPinningStyles = (
+  column: Column<Product>
+): React.CSSProperties => {
+  const isPinned = column.getIsPinned();
+  const isLastLeftPinnedColumn =
+    isPinned === "left" && column.getIsLastColumn("left");
+  const isFirstRightPinnedColumn =
+    isPinned === "right" && column.getIsFirstColumn("right");
+
+  return {
+    boxShadow: isLastLeftPinnedColumn
+      ? "-4px 0 4px -4px gray inset"
+      : isFirstRightPinnedColumn
+      ? "2px 0 4px -4px gray inset"
+      : undefined,
+    left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
+    right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
+    opacity: isPinned ? 0.95 : 1,
+    position: isPinned ? "sticky" : "relative",
+    width: column.getSize(),
+    zIndex: isPinned ? 1 : 0,
+    backgroundColor: "white",
+  };
+};
 
 export function DataTable<TData, TValue>({
   columns,
@@ -65,6 +92,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    initialState: {
+      columnPinning: {
+        right: ["actions"],
+      },
+    },
   });
 
   return (
@@ -80,6 +112,8 @@ export function DataTable<TData, TValue>({
                     className="px-4 py-2"
                     key={header.id}
                     colSpan={header.colSpan}
+                    // @ts-ignore
+                    style={{ ...getCommonPinningStyles(header.column) }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -100,7 +134,14 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell className="px-4 py-2" key={cell.id}>
+                    <TableCell
+                      style={{
+                        // @ts-ignore
+                        ...getCommonPinningStyles(cell.column),
+                      }}
+                      className="px-4 py-2"
+                      key={cell.id}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

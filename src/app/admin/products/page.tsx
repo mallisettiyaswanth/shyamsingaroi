@@ -3,7 +3,7 @@
 import { DataTable } from "@/components/global/data-table/data-table";
 import { columns } from "@/components/global/data-table/columns";
 import { useQuery } from "@tanstack/react-query";
-import getProducts from "@/actions/supabase/product/get-products";
+import getProducts from "@/actions/supabase/product/get-all-products";
 
 export default function Page() {
   const { data } = useQuery({
